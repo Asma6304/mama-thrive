@@ -53,6 +53,7 @@ const DashboardLayout = () => {
           <button
             onClick={() => setIsSidebarOpen(true)}
             className="p-2 text-foreground"
+            title="Open navigation menu"
           >
             <Menu className="w-6 h-6" />
           </button>
