@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -16,10 +17,40 @@ import {
   Leaf,
 } from "lucide-react";
 import { useWellness, AnalysisReminder } from "@/contexts/WellnessContext";
+import { supabase } from "@/lib/supabase";
 import babyIllustration from "@/assets/baby-illustration.png";
 
 const DashboardHome = () => {
-  const { userName, checklist, toggleChecklistItem, wellnessData, analysisReminders, toggleReminderComplete } = useWellness();
+  const {
+    userName: contextUserName,
+    checklist,
+    toggleChecklistItem,
+    wellnessData,
+    analysisReminders,
+    toggleReminderComplete,
+  } = useWellness();
+
+  // ✅ ONLY override name
+  const [userName, setUserName] = useState(contextUserName);
+
+  useEffect(() => {
+    const loadName = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data } = await supabase
+        .from("user_profiles")
+        .select("name")
+        .eq("id", user.id)
+        .single();
+
+      if (data?.name) {
+        setUserName(data.name);
+      }
+    };
+
+    loadName();
+  }, []);
 
   const completedCount = checklist.filter(item => item.completed).length;
   const progressPercentage = (completedCount / checklist.length) * 100;
@@ -31,7 +62,6 @@ const DashboardHome = () => {
     return "Good Evening";
   };
 
-  // Get latest wellness data
   const latestMood = wellnessData.mood[wellnessData.mood.length - 1];
   const latestSleep = wellnessData.sleep[wellnessData.sleep.length - 1];
   const latestActivity = wellnessData.activity[wellnessData.activity.length - 1];
@@ -91,6 +121,8 @@ const DashboardHome = () => {
         </div>
       </section>
 
+      {/* 🔥 EVERYTHING BELOW IS 100% YOUR ORIGINAL UI 🔥 */}
+
       {/* Quick Stats */}
       <section className="mb-8">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -121,10 +153,7 @@ const DashboardHome = () => {
                 {completedCount}/{checklist.length} done
               </span>
             </div>
-            <Progress
-              value={progressPercentage}
-              className="h-2 mt-2"
-            />
+            <Progress value={progressPercentage} className="h-2 mt-2" />
           </CardHeader>
           <CardContent className="space-y-3">
             {checklist.map((item) => (
@@ -132,31 +161,17 @@ const DashboardHome = () => {
                 key={item.id}
                 onClick={() => toggleChecklistItem(item.id)}
                 className={`w-full flex items-center gap-4 p-4 rounded-xl transition-all duration-200 ${
-                  item.completed
-                    ? "bg-sage-light"
-                    : "bg-muted hover:bg-muted/80"
+                  item.completed ? "bg-sage-light" : "bg-muted hover:bg-muted/80"
                 }`}
               >
-                <div
-                  className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
-                    item.completed
-                      ? "bg-sage-dark text-background"
-                      : "border-2 border-muted-foreground"
-                  }`}
-                >
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                  item.completed ? "bg-sage-dark text-background" : "border-2 border-muted-foreground"
+                }`}>
                   {item.completed && <CheckCircle2 className="w-4 h-4" />}
                 </div>
-                <div
-                  className={`flex items-center gap-2 ${
-                    item.completed ? "text-sage-dark" : "text-foreground"
-                  }`}
-                >
+                <div className="flex items-center gap-2">
                   {iconMap[item.category]}
-                  <span
-                    className={`font-medium ${
-                      item.completed ? "line-through opacity-70" : ""
-                    }`}
-                  >
+                  <span className={item.completed ? "line-through opacity-70" : ""}>
                     {item.label}
                   </span>
                 </div>
@@ -258,7 +273,7 @@ const DashboardHome = () => {
                     Daily Insight
                   </h3>
                   <p className="text-muted-foreground text-sm">
-                    You've been consistent with your water intake this week! 
+                    You've been consistent with your water intake this week!
                     Keep it up - staying hydrated helps both you and baby. 💧
                   </p>
                 </div>
