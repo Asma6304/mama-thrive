@@ -39,6 +39,7 @@ const DashboardLayout = () => {
     { icon: <ShoppingBag className="w-5 h-5" />, label: "Products", path: "/dashboard/products" },
     { icon: <Mail className="w-5 h-5" />, label: "Email Insights", path: "/dashboard/insights" },
     { icon: <Users className="w-5 h-5" />, label: "Community", path: "/dashboard/community" },
+    { icon: <MessageSquare className="w-5 h-5" />, label: "Messages", path: "/dashboard/messages" },
   ];
 
   const isActive = (path: string) => {
