@@ -14,6 +14,7 @@ import {
   BarChart3,
   Apple,
   ShoppingBag,
+  Users,
 } from "lucide-react";
 
 const DashboardLayout = () => {
