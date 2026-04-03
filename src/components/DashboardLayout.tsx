@@ -15,6 +15,7 @@ import {
   Apple,
   ShoppingBag,
   Users,
+  MessageSquare,
 } from "lucide-react";
 
 const DashboardLayout = () => {
