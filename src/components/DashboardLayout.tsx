@@ -14,6 +14,7 @@ import {
   BarChart3,
   Apple,
   ShoppingBag,
+  Users,
 } from "lucide-react";
 
 const DashboardLayout = () => {
@@ -36,6 +37,7 @@ const DashboardLayout = () => {
     { icon: <Brain className="w-5 h-5" />, label: "AI Analysis", path: "/dashboard/ai-analysis" },
     { icon: <ShoppingBag className="w-5 h-5" />, label: "Products", path: "/dashboard/products" },
     { icon: <Mail className="w-5 h-5" />, label: "Email Insights", path: "/dashboard/insights" },
+    { icon: <Users className="w-5 h-5" />, label: "Community", path: "/dashboard/community" },
   ];
 
   const isActive = (path: string) => {
