@@ -19,6 +19,7 @@ import InsightsPage from "./pages/dashboard/InsightsPage";
 import DietPage from "./pages/dashboard/DietPage";
 import ProductsPage from "./pages/dashboard/ProductsPage";
 import CommunityPage from "./pages/dashboard/CommunityPage";
+import MessagesPage from "./pages/dashboard/MessagesPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
