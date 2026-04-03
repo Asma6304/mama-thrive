@@ -22,62 +22,76 @@ const AuthPage = () => {
     password: "",
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    try {
-      if (isLogin) {
-        // LOGIN
-        const { error } = await supabase.auth.signInWithPassword({
-          email: formData.email,
-          password: formData.password,
-        });
-        if (error) throw error;
+  if (isLoading) return; // 🔥 prevents multiple calls
+  setIsLoading(true);
 
-        toast({
-          title: "Welcome back 🌸",
-          description: "Signed in successfully",
-        });
+  try {
+    console.log("AUTH CALLED"); // debug
 
-        navigate("/dashboard");
-      } else {
-        // SIGNUP
-        const { data, error } = await supabase.auth.signUp({
-          email: formData.email,
-          password: formData.password,
-        });
-        if (error) throw error;
-        if (!data.user) throw new Error("User not created");
-
-        // CREATE PROFILE ROW
-        const { error: profileError } = await supabase
-          .from("user_profiles")
-          .insert({
-            id: data.user.id,
-            name: formData.name,
-            email: formData.email,
-          });
-
-        if (profileError) throw profileError;
-
-        toast({
-          title: "Account created 🎉",
-          description: "Let's set up your profile",
-        });
-
-        navigate("/onboarding");
-      }
-    } catch (err: any) {
-      toast({
-        title: "Authentication failed",
-        description: err.message,
-        variant: "destructive",
+    if (isLogin) {
+      // LOGIN
+      const { error } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
       });
-    } finally {
-      setIsLoading(false);
+
+      if (error) throw error;
+
+      toast({
+        title: "Welcome back 🌸",
+        description: "Signed in successfully",
+      });
+
+      navigate("/dashboard");
+    } else {
+      // SIGNUP
+      const { data, error } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (error) throw error;
+
+      // ⚠️ sometimes user is null if email confirm is ON
+      if (!data.user) {
+        toast({
+          title: "Check your email 📩",
+          description: "Confirm your email before logging in",
+        });
+        return;
+      }
+
+      // INSERT PROFILE
+      const { error: profileError } = await supabase
+        .from("user_profiles")
+        .insert({
+          id: data.user.id,
+          name: formData.name,
+          email: formData.email,
+        });
+
+      if (profileError) throw profileError;
+
+      toast({
+        title: "Account created 🎉",
+        description: "Let's set up your profile",
+      });
+
+      navigate("/onboarding");
     }
-  };
+  } catch (err: any) {
+    toast({
+      title: "Authentication failed",
+      description: err.message,
+      variant: "destructive",
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-coral-light via-background to-sage-light flex items-center justify-center p-4">
