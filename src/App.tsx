@@ -18,6 +18,7 @@ import GraphsPage from "./pages/dashboard/GraphsPage";
 import InsightsPage from "./pages/dashboard/InsightsPage";
 import DietPage from "./pages/dashboard/DietPage";
 import ProductsPage from "./pages/dashboard/ProductsPage";
+import CommunityPage from "./pages/dashboard/CommunityPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
